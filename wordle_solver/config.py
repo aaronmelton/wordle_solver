@@ -13,7 +13,7 @@ app_dict = {
     "name": "wordle_solver.py",
     "title": "Wordle Solver",
     "url": "https://github.com/aaronmelton/wordle_solver",
-    "version": "v0.3.0",
+    "version": "v0.3.1",
 }
 
 # Logging Variables

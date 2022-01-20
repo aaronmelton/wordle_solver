@@ -291,7 +291,7 @@ def main():
     print("")
 
     for word in word_list:
-        this_word = input(f"{word} Word:")
+        this_word = input(f"{word} Word: ")
         this_word = this_word.lower()
         if this_word:
             yellow_letters = input("Any Yellows: ")

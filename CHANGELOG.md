@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [0.3.1] - 2022-01-20
+### Changed
+- Added space between Word: and the user input.
+
 ## [0.3.0] - 2022-01-20
 ### Changed
 - Added new functions to improve code re-use.
