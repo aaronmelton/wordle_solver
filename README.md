@@ -19,9 +19,9 @@ I wrote this script to gain some experience working with Pandas Data Frames.  An
 
 * `python wordle_solver.py`
 
-[wordle_game](wordle_game.png)
+![wordle_game](wordle_game.png)
 
-[wordle_solver](wordle_solver.png)
+![wordle_solver](wordle_solver.png)
 
 ## Authors
 * **Aaron Melton** - *Author* - Aaron Melton <aaron@aaronmelton.com>
