@@ -1,6 +1,6 @@
 # Project-specific files
 *.sublime-*
-run.sh
+*.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
