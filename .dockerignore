@@ -1,0 +1,14 @@
+**/__pycache__/
+**/bin/
+**/include/
+**/lib/
+**/lib64
+*.tar.gz
+.env
+.git/
+.gitignore
+.gitlab-ci.yml
+.pytest_cache
+docker-compose*.yml
+Dockerfile
+**/run.sh
