@@ -2,9 +2,6 @@
 
 1. Create a GUI front-end to improve use.
 2. Remove logging; Does anyone else actually care about this?
-3. Improve possible matches by ignoring words that contain a matching letter in
-the same position as a former yellow letter.  For example: If you guess AUDIO
-and get a yellow match on the letter "I", the script should remove all words
-that also contain an "I" in the 4th position.
-4. Input validation.
-5. Accept no matches for yellow/green words (sometimes produces error).
+3. Add a function to generate words not in the list of possibilities but not reusing any already-used words?
+4. Order words in list based on statistical letter distribution (most common letters in English)?
+5. Reduce Docker Image size (307MB!?)

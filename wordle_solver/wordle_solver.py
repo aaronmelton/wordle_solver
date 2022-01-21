@@ -6,6 +6,7 @@
 import logging
 import sys
 from datetime import date
+from string import ascii_lowercase
 from time import time
 
 import pandas
@@ -50,40 +51,41 @@ def build_dataframe(this_list):
     return pandas.DataFrame(word_dict)
 
 
-def find_green_position(greens_dict, word, green):
-    """Build a dictionary of where the green letters are in a word.
+def find_letter_position(words_dict, word, letters):
+    """Build a dictionary of where the letters are in a word.
 
     Args
     ----
+    words_dict: dict
     word: str
-    green: str
+    letters: str
 
     Returns
     -------
-    green_position: dict
+    words_dict: dict
     """
     logger.debug("START")
-    logger.debug("greens_dict=='%s'", greens_dict)
+    logger.debug("words_dict=='%s'", words_dict)
     logger.debug("word=='%s'", word)
-    logger.debug("green=='%s'", green)
-    for letter in green:
+    logger.debug("letters=='%s'", letters)
+    for letter in letters:
         position = word.find(letter)
         if position == 0:
-            greens_dict["column1"] = letter
+            words_dict["column1"] = letter
         if position == 1:
-            greens_dict["column2"] = letter
+            words_dict["column2"] = letter
         if position == 2:
-            greens_dict["column3"] = letter
+            words_dict["column3"] = letter
         if position == 3:
-            greens_dict["column4"] = letter
+            words_dict["column4"] = letter
         if position == 4:
-            greens_dict["column5"] = letter
-    logger.debug("greens_dict=='%s'", greens_dict)
+            words_dict["column5"] = letter
+    logger.debug("words_dict=='%s'", words_dict)
     logger.debug("STOP")
-    return greens_dict
+    return words_dict
 
 
-def find_matches(old_dataframe, this_word, track_greens, track_yellows, track_bad_letters):
+def find_matches(**kwargs):
     """Find matching columns/rows in a Pandas Data Frame.
 
     Args
@@ -91,6 +93,7 @@ def find_matches(old_dataframe, this_word, track_greens, track_yellows, track_ba
     old_dataframe: pandas.DataFrame()
     this_word: str
     track_greens: str
+    yellows_dict: dict
     track_yellows: str
     track_bad_letters: str
 
@@ -100,18 +103,25 @@ def find_matches(old_dataframe, this_word, track_greens, track_yellows, track_ba
 
     """
     logger.debug("START")
+    old_dataframe = kwargs["initial_df"]
+    this_word = kwargs["this_word"]
+    track_greens = kwargs["track_greens"]
+    yellows_dict = kwargs["yellows_dict"]
+    track_yellows = kwargs["track_yellows"]
+    track_bad_letters = kwargs["track_bad_letters"]
     logger.debug("this_word=='%s'", this_word)
     logger.debug("track_greens=='%s'", track_greens)
+    logger.debug("yellows_dict=='%s'", yellows_dict)
     logger.debug("track_yellows=='%s'", track_yellows)
     logger.debug("track_bad_letters=='%s'", track_bad_letters)
     new_dataframe = old_dataframe
     # Find all words with green letters in that position.
     if track_greens:
-        found_greens = track_greens
-        new_dataframe = find_matching_greens(old_dataframe, found_greens)
+        new_dataframe = find_matching_columns(old_dataframe, track_greens)
     # Find all words with yellow letters anywhere in the word.
     if track_yellows:
-        new_dataframe = find_matching_yellows(new_dataframe, track_yellows)
+        new_dataframe = find_matching_rows(new_dataframe, track_yellows)
+        new_dataframe = remove_columns(new_dataframe, yellows_dict)
     # Remove all words with non-matching letters.
     if track_bad_letters:
         new_dataframe = remove_rows(new_dataframe, track_bad_letters)
@@ -119,7 +129,7 @@ def find_matches(old_dataframe, this_word, track_greens, track_yellows, track_ba
     return new_dataframe
 
 
-def find_matching_greens(this_dataframe, these_columns):
+def find_matching_columns(this_dataframe, these_columns):
     """Find matching columns in a Pandas Data Frame.  We know the green letters \
     positions so we will search columns for those letters.
 
@@ -149,7 +159,7 @@ def find_matching_greens(this_dataframe, these_columns):
     return matching_dataframe
 
 
-def find_matching_yellows(this_dataframe, these_values):
+def find_matching_rows(this_dataframe, these_values):
     """Find matching rows in a Pandas Data Frame.  We don't know the yellow \
     letters position so we will search rows for those letters.
 
@@ -166,7 +176,64 @@ def find_matching_yellows(this_dataframe, these_values):
     logger.debug("these_values=='%s'", these_values)
     matching_dataframe = this_dataframe
     for this_value in these_values:
-        matching_dataframe = matching_dataframe[matching_dataframe.sum(axis=1).str.contains(this_value)]
+        matching_dataframe = matching_dataframe[matching_dataframe.sum(axis=1).astype(str).str.contains(this_value)]
+    logger.debug("STOP")
+    return matching_dataframe
+
+
+def get_input(message):
+    """Get input from the User and then validate input.
+
+    Args
+    ----
+    message: str
+    input_string: str
+
+    Returns
+    -------
+    validated_input: str
+
+    """
+    logger.debug("START")
+    logger.debug("message==%s", message)
+    validated_input = ""
+    validated = False
+    while not validated:
+        validated_input = input(message)
+        validated_input = validated_input.strip().lower()
+        validated = validate_input(validated_input)
+    logger.debug("validated_input==%s", validated_input)
+    logger.debug("STOP")
+    return validated_input
+
+
+def remove_columns(this_dataframe, these_columns):
+    """Find and remove matching columns in a Pandas Data Frame.  We know the \
+    yellow letters positions and they were not matches so we will search \
+    columns for those letters and remove them from potential matches.
+
+    Args
+    ----
+    this_dataframe: pandas.DataFrame()
+    these_columns: dict
+
+    Returns
+    -------
+    matching_dataframe: pandas.DataFrame()
+    """
+    logger.debug("START")
+    logger.debug("these_columns=='%s'", these_columns)
+    matching_dataframe = this_dataframe
+    if these_columns["column1"]:
+        matching_dataframe = matching_dataframe.loc[(matching_dataframe["column1"] != these_columns["column1"])]
+    if these_columns["column2"]:
+        matching_dataframe = matching_dataframe.loc[(matching_dataframe["column2"] != these_columns["column2"])]
+    if these_columns["column3"]:
+        matching_dataframe = matching_dataframe.loc[(matching_dataframe["column3"] != these_columns["column3"])]
+    if these_columns["column4"]:
+        matching_dataframe = matching_dataframe.loc[(matching_dataframe["column4"] != these_columns["column4"])]
+    if these_columns["column5"]:
+        matching_dataframe = matching_dataframe.loc[(matching_dataframe["column5"] != these_columns["column5"])]
     logger.debug("STOP")
     return matching_dataframe
 
@@ -232,9 +299,42 @@ def remove_rows(this_dataframe, these_values):
     logger.debug("these_values=='%s'", these_values)
     matching_dataframe = this_dataframe
     for this_value in these_values:
-        matching_dataframe = matching_dataframe[matching_dataframe.sum(axis=1).str.contains(this_value) == False]
+        matching_dataframe = matching_dataframe[
+            matching_dataframe.sum(axis=1).astype(str).str.contains(this_value) == False
+        ]
     logger.debug("STOP")
     return matching_dataframe
+
+
+def validate_input(input_string):
+    """Validate input provided by the User.
+
+    Args
+    ----
+    input_string: str
+
+    Returns
+    -------
+    valid: bool
+
+    """
+    logger.debug("START")
+    logger.debug("input_string==%s", input_string)
+    valid = False
+    # Accept ENTER (no string) as valid input
+    if input_string == "":
+        valid = True
+    else:
+        # Only valid string are ASCII characters
+        for letter in input_string:
+            if letter in ascii_lowercase:
+                valid = True
+            else:
+                valid = False
+                break
+    logger.debug("valid==%s", valid)
+    logger.debug("STOP")
+    return valid
 
 
 def main():
@@ -282,6 +382,13 @@ def main():
         "column4": None,
         "column5": None,
     }
+    yellows_dict = {
+        "column1": None,
+        "column2": None,
+        "column3": None,
+        "column4": None,
+        "column5": None,
+    }
     word_list = ["First", "Second", "Third", "Fourth", "Fifth", "Sixth"]
     initial_df = build_dataframe(easy_words)
 
@@ -291,13 +398,10 @@ def main():
     print("")
 
     for word in word_list:
-        this_word = input(f"{word} Word: ")
-        this_word = this_word.lower()
+        this_word = get_input(f"{word} Word: ")
         if this_word:
-            yellow_letters = input("Any Yellows: ")
-            yellow_letters = yellow_letters.lower()
-            green_letters = input("Any Greens: ")
-            green_letters = green_letters.lower()
+            yellow_letters = get_input("Any Yellows: ")
+            green_letters = get_input("Any Greens: ")
             print("")
 
             track_yellows += yellow_letters
@@ -306,11 +410,20 @@ def main():
             track_greens = remove_duplicates(track_greens)
             track_bad_letters += remove_keep_letters(this_word, yellow_letters + green_letters)
             track_bad_letters = remove_duplicates(track_bad_letters)
-            greens_dict = find_green_position(greens_dict, this_word, green_letters)
-            matching_df = find_matches(initial_df, this_word, greens_dict, track_yellows, track_bad_letters)
+            greens_dict = find_letter_position(greens_dict, this_word, green_letters)
+            yellows_dict = find_letter_position(yellows_dict, this_word, yellow_letters)
+            matching_df = find_matches(
+                initial_df=initial_df,
+                this_word=this_word,
+                track_greens=greens_dict,
+                yellows_dict=yellows_dict,
+                track_yellows=track_yellows,
+                track_bad_letters=track_bad_letters,
+            )
 
             print(f"""{len(matching_df.sum(axis=1).tolist())} Possible Matches: {matching_df.sum(axis=1).tolist()}""")
             print("")
+            # If only one solution is provided, quit.
             if len(matching_df.sum(axis=1).tolist()) == 1:
                 break
         elif not this_word:

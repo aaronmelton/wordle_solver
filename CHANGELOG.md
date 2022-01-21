@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [0.4.0] - 2022-01-20
+### Added
+- get_input(), validate_input(): Added input validation.
+- remove_columns(): Removed columns (rows, really) where yellows did not match.
+### Changed
+- Corrected matching_dataframe Pandas query to correct situations that would
+  cause an error when the User supplies non-matching input.
+- Renamed a couple functions to better reflect their purpose.
+- README.md: Improved documentation.
+- wordle_*.png: Updated to show improved functionality.
+
 ## [0.3.1] - 2022-01-20
 ### Changed
 - Added space between Word: and the user input.
