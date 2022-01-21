@@ -1,6 +1,12 @@
 # CHANGELOG
 
-## [0.4.0] - 2022-01-20
+## [0.4.1] - 2022-01-21
+### Changed
+- README.md: Cleaned up headers.
+- wordle_solver.png: Combined two screenshots into one image.
+- wordle_solver.py: Fixed grammar.
+
+## [0.4.0] - 2022-01-21
 ### Added
 - get_input(), validate_input(): Added input validation.
 - remove_columns(): Removed columns (rows, really) where yellows did not match.

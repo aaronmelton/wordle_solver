@@ -421,7 +421,7 @@ def main():
                 track_bad_letters=track_bad_letters,
             )
 
-            print(f"""{len(matching_df.sum(axis=1).tolist())} Possible Matches: {matching_df.sum(axis=1).tolist()}""")
+            print(f"""{len(matching_df.sum(axis=1).tolist())} Possible Match(es): {matching_df.sum(axis=1).tolist()}""")
             print("")
             # If only one solution is provided, quit.
             if len(matching_df.sum(axis=1).tolist()) == 1:

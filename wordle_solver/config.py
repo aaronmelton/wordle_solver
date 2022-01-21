@@ -9,7 +9,7 @@ import os
 app_dict = {
     "author": "Aaron Melton <aaron@aaronmelton.com>",
     "date": "2022-01-21",
-    "desc": "A Python script that produces a list of possible words based on results from playing Wordle.",
+    "desc": "A Python script that produces a list of possible words based on your results from playing Wordle.",
     "name": "wordle_solver.py",
     "title": "Wordle Solver",
     "url": "https://github.com/aaronmelton/wordle_solver",

@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "wordle_solver"
-version = "0.3.0"
-description = "A Python script that guesses the most probable answer to the next Wordle move."
+version = "0.4.0"
+description = "A Python script that produces a list of possible words based on your results from playing Wordle."
 authors = ["Aaron Melton <aaron@aaronmelton.com>"]
 
 [tool.poetry.dependencies]
