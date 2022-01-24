@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## [0.5.0] - 2022-01-24
+### Changed
+- Changed all references to dataframes to specify the columns containing the
+  letters.  Now that each dataframe contains more than a string the old method
+  for working with dataframes no longer works.
+- Changed script to allow user to determine if they want to use the easy or hard
+  word list.  If they select hard it will combine both the easy and hard words
+  into a single list.
+### Added
+- Added functionality to calculate the distribution of letters in the word list
+  and apply a value to each word.  The more common letters present in a word the
+  more 'valuable' the word is.  I'm not a statistician but I *think* providing
+  this sorted list to the user may be useful?
+- Added additional debug logging to track how the dataframe changes between
+  functions.
+- Added checks to the presence of yellow/green letters to prevent functions from
+  attempting to process blank inputs from the user.
+
 ## [0.4.1] - 2022-01-21
 ### Changed
 - README.md: Cleaned up headers.

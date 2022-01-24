@@ -18,6 +18,9 @@ I wrote this script to gain some experience working with Pandas Data Frames.  An
 * After guessing your first word you don't have to guess a word using the list provided by the script.  (See usage below.)
 * Guess using a word not on the list and not reusing any letters in the previous word can rule out additional letters, reveal more matching letters and greatly reduce the number of words left to choose from.
 
+### Limitations
+1. Functionality is limited to 5-character words only.
+
 ## Prerequisites
 * Set environment variables (see config.py).
 

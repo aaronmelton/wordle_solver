@@ -11,7 +11,7 @@ from time import time
 
 import pandas
 from config import app_dict, log_dict
-from wordle_words import easy_words
+from wordle_words import easy_words, hard_words
 
 
 def build_dataframe(this_list):
@@ -31,6 +31,7 @@ def build_dataframe(this_list):
     column3 = []
     column4 = []
     column5 = []
+    value = []
     word_dict = {}
 
     for this_word in this_list:
@@ -39,6 +40,7 @@ def build_dataframe(this_list):
         column3 += this_word[2]
         column4 += this_word[3]
         column5 += this_word[4]
+        value = 0
 
     word_dict = {
         "column1": column1,
@@ -46,9 +48,38 @@ def build_dataframe(this_list):
         "column3": column3,
         "column4": column4,
         "column5": column5,
+        "value": value,
     }
     logger.debug("STOP")
     return pandas.DataFrame(word_dict)
+
+
+def calc_word_probability(this_dataframe, this_dict):
+    """Calculate the probability of the word occurring based on the value of\
+    the letter distribution in the list.
+
+    Args
+    ----
+    this_dataframe: pandas.DataFrame()
+    this_dict: dict
+
+    Returns
+    -------
+    dataframe: pandas.DataFrame()
+    """
+    logger.debug("START")
+    this_dataframe["value"] = this_dataframe.apply(
+        lambda row: (
+            this_dict[row.column1]
+            + this_dict[row.column2]
+            + this_dict[row.column3]
+            + this_dict[row.column4]
+            + this_dict[row.column5]
+        ),
+        axis=1,
+    )
+    logger.debug("STOP")
+    return this_dataframe
 
 
 def find_letter_position(words_dict, word, letters):
@@ -117,14 +148,33 @@ def find_matches(**kwargs):
     new_dataframe = old_dataframe
     # Find all words with green letters in that position.
     if track_greens:
+        logger.info("Processing green letters...")
         new_dataframe = find_matching_columns(old_dataframe, track_greens)
+        logger.debug(
+            "Possible words after processing green letters==\n\n%s\n",
+            new_dataframe[["column1", "column2", "column3", "column4", "column5"]].sum(axis=1).tolist(),
+        )
     # Find all words with yellow letters anywhere in the word.
     if track_yellows:
+        logger.info("Processing yellow letters...")
         new_dataframe = find_matching_rows(new_dataframe, track_yellows)
+        logger.debug(
+            "Possible words after processing yellow letters==\n\n%s\n",
+            new_dataframe[["column1", "column2", "column3", "column4", "column5"]].sum(axis=1).tolist(),
+        )
         new_dataframe = remove_columns(new_dataframe, yellows_dict)
+        logger.debug(
+            "Possible words after processing yellow letters==\n\n%s\n",
+            new_dataframe[["column1", "column2", "column3", "column4", "column5"]].sum(axis=1).tolist(),
+        )
     # Remove all words with non-matching letters.
     if track_bad_letters:
+        logger.info("Removing letters that didn't match...")
         new_dataframe = remove_rows(new_dataframe, track_bad_letters)
+        logger.debug(
+            "Possible words after removing letters that did't match==\n\n%s\n",
+            new_dataframe[["column1", "column2", "column3", "column4", "column5"]].sum(axis=1).tolist(),
+        )
     logger.debug("STOP")
     return new_dataframe
 
@@ -144,6 +194,9 @@ def find_matching_columns(this_dataframe, these_columns):
     """
     logger.debug("START")
     logger.debug("these_columns=='%s'", these_columns)
+    logger.debug(
+        "XXX %s", len(this_dataframe[["column1", "column2", "column3", "column4", "column5"]].sum(axis=1).tolist())
+    )
     matching_dataframe = this_dataframe
     if these_columns["column1"]:
         matching_dataframe = matching_dataframe.loc[(matching_dataframe["column1"] == these_columns["column1"])]
@@ -155,6 +208,9 @@ def find_matching_columns(this_dataframe, these_columns):
         matching_dataframe = matching_dataframe.loc[(matching_dataframe["column4"] == these_columns["column4"])]
     if these_columns["column5"]:
         matching_dataframe = matching_dataframe.loc[(matching_dataframe["column5"] == these_columns["column5"])]
+    logger.debug(
+        "YYY %s", len(matching_dataframe[["column1", "column2", "column3", "column4", "column5"]].sum(axis=1).tolist())
+    )
     logger.debug("STOP")
     return matching_dataframe
 
@@ -176,9 +232,45 @@ def find_matching_rows(this_dataframe, these_values):
     logger.debug("these_values=='%s'", these_values)
     matching_dataframe = this_dataframe
     for this_value in these_values:
-        matching_dataframe = matching_dataframe[matching_dataframe.sum(axis=1).astype(str).str.contains(this_value)]
+        matching_dataframe = matching_dataframe[
+            matching_dataframe[["column1", "column2", "column3", "column4", "column5"]]
+            .sum(axis=1)
+            .astype(str)
+            .str.contains(this_value)
+        ]
     logger.debug("STOP")
     return matching_dataframe
+
+
+def get_letter_dist(this_dataframe):
+    """Determine distribution of letters in provided dataframe.
+
+    Args
+    ----
+    this_dataframe: pandas.DataFrame()
+
+    Returns
+    -------
+    letter_dict: dict
+
+    """
+    logger.debug("START")
+    letter_dict = {}
+    total_letters = 0
+    for letter in ascii_lowercase:
+        letter_total = 0
+        for column in this_dataframe:
+            try:
+                # Need try or will error if letter is not present in that column
+                letter_total += this_dataframe[column].value_counts()[letter]
+            except KeyError:
+                pass
+        letter_dict[letter] = letter_total
+        total_letters += letter_total
+    for letter in letter_dict:
+        letter_dict[letter] = letter_dict[letter] / letter_total
+    logger.debug("STOP")
+    return letter_dict
 
 
 def get_input(message):
@@ -300,7 +392,11 @@ def remove_rows(this_dataframe, these_values):
     matching_dataframe = this_dataframe
     for this_value in these_values:
         matching_dataframe = matching_dataframe[
-            matching_dataframe.sum(axis=1).astype(str).str.contains(this_value) == False
+            matching_dataframe[["column1", "column2", "column3", "column4", "column5"]]
+            .sum(axis=1)
+            .astype(str)
+            .str.contains(this_value)
+            == False
         ]
     logger.debug("STOP")
     return matching_dataframe
@@ -390,7 +486,19 @@ def main():
         "column5": None,
     }
     word_list = ["First", "Second", "Third", "Fourth", "Fifth", "Sixth"]
-    initial_df = build_dataframe(easy_words)
+
+    logger.debug("""app_dict["difficulty"]=='%s'""", app_dict["difficulty"])
+    if app_dict["difficulty"] == "hard":
+        logger.info("Using easy and hard words...")
+        these_words = set(easy_words + hard_words)
+    else:
+        logger.info("Using easy words...")
+        these_words = easy_words
+
+    logger.info("Loading %s words from word file...", len(these_words))
+    initial_df = build_dataframe(these_words)
+    letter_distri_dict = get_letter_dist(initial_df)
+    initial_df = calc_word_probability(initial_df, letter_distri_dict)
 
     app_header = f"""{app_dict["name"]} {app_dict["version"]} {app_dict["date"]}"""
     print(app_header)
@@ -404,14 +512,16 @@ def main():
             green_letters = get_input("Any Greens: ")
             print("")
 
-            track_yellows += yellow_letters
-            track_yellows = remove_duplicates(track_yellows)
-            track_greens += green_letters
-            track_greens = remove_duplicates(track_greens)
+            if yellow_letters:
+                track_yellows += yellow_letters
+                track_yellows = remove_duplicates(track_yellows)
+                yellows_dict = find_letter_position(yellows_dict, this_word, yellow_letters)
+            if green_letters:
+                track_greens += green_letters
+                track_greens = remove_duplicates(track_greens)
+                greens_dict = find_letter_position(greens_dict, this_word, green_letters)
             track_bad_letters += remove_keep_letters(this_word, yellow_letters + green_letters)
             track_bad_letters = remove_duplicates(track_bad_letters)
-            greens_dict = find_letter_position(greens_dict, this_word, green_letters)
-            yellows_dict = find_letter_position(yellows_dict, this_word, yellow_letters)
             matching_df = find_matches(
                 initial_df=initial_df,
                 this_word=this_word,
@@ -420,15 +530,25 @@ def main():
                 track_yellows=track_yellows,
                 track_bad_letters=track_bad_letters,
             )
-
-            print(f"""{len(matching_df.sum(axis=1).tolist())} Possible Match(es): {matching_df.sum(axis=1).tolist()}""")
+            number_matches = len(
+                matching_df[["column1", "column2", "column3", "column4", "column5"]].sum(axis=1).tolist()
+            )
+            # Print output sorted alphabetically
+            print(
+                f"""{number_matches} Alphabetical Match(es): {matching_df[["column1", "column2", "column3", "column4", "column5"]].sum(axis=1).tolist()}"""
+            )
+            print("---")
+            # Print output sorted by word value
+            print(
+                f"""{number_matches} Probable Match(es): {matching_df.sort_values(by=['value'], ascending=False)[["column1", "column2", "column3", "column4", "column5"]].sum(axis=1).tolist()}"""
+            )
             print("")
+
             # If only one solution is provided, quit.
-            if len(matching_df.sum(axis=1).tolist()) == 1:
+            if len(matching_df[["column1", "column2", "column3", "column4", "column5"]].sum(axis=1).tolist()) == 1:
                 break
         elif not this_word:
             break
-
     logger.info("Total Execution Time: %s seconds", time() - start_time)
     logger.info("STOP STOP STOP")
     return 0
