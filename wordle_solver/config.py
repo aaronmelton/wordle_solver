@@ -8,12 +8,12 @@ import os
 # Application Variables
 app_dict = {
     "author": "Aaron Melton <aaron@aaronmelton.com>",
-    "date": "2022-01-24",
+    "date": "2022-01-30",
     "desc": "A Python script that produces a list of possible words based on your results from playing Wordle.",
     "name": "wordle_solver.py",
     "title": "Wordle Solver",
     "url": "https://github.com/aaronmelton/wordle_solver",
-    "version": "v0.5.0",
+    "version": "v0.5.1",
     "difficulty": "hard",
 }
 

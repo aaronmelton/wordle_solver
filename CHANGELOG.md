@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [0.5.1] - 2022-01-30
+### Changed
+- Broke sorting list alphabetically somewhere along the way so fixed this.
+- Cleaned up the code a little bit by creating a list to track the column
+  headers of the Pandas DataFrame versus typing it out at length every time it
+  was called.
+### Removed
+- Removed some debug code.
+
 ## [0.5.0] - 2022-01-24
 ### Changed
 - Changed all references to dataframes to specify the columns containing the
