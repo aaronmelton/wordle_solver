@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [0.6.0] - 2022-02-11
+### Added
+- Added input validation to enforce 5-character words.
+### Changed
+- Searching for green letters before yellow letters to more quickly pare down
+  the list.
+### Removed
+- Removed functions assigning value to words (need to re-work this).
+
 ## [0.5.1] - 2022-01-30
 ### Changed
 - Broke sorting list alphabetically somewhere along the way so fixed this.

@@ -11,7 +11,8 @@ I wrote this script to gain some experience working with Pandas Data Frames.  An
 	1. If a green letter is revealed, the script will remove all words that do not contain the green letter in the revealed position.
 	2. If a yellow letter is revealed, the script will remove all words that contain the yellow letter in the revealed position (otherwise it would have been a green letter instead of a yellow).
 	3. If a yellow letter is revealed, the script will remove all words that lack the yellow letter.
-	4. Repeat for each word until only one match remains or all six words have been used.
+	4. If a gray letter is revealed, the script will remove all words that contain the gray letter.
+	5. Repeat for each word until only one match remains or all six words have been used.
 3. Provide the user with a list of possible matches after each word.
 
 ### Hints
