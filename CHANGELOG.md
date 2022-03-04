@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [0.7.0] - 2022-03-04
+### Changed
+- Ignoring pylint warning.
+- Updating pbr (5.8.0 -> 5.8.1)
+- Updating pyparsing (3.0.6 -> 3.0.7)
+- Updating click (8.0.3 -> 8.0.4)
+- Updating gitpython (3.1.26 -> 3.1.27)
+- Updating numpy (1.22.1 -> 1.22.2)
+- Updating platformdirs (2.4.1 -> 2.5.1)
+- Updating typing-extensions (4.0.1 -> 4.1.1)
+- Updating bandit (1.7.1 -> 1.7.4)
+- Updating pandas (1.3.5 -> 1.4.1)
+
 ## [0.6.0] - 2022-02-11
 ### Added
 - Added input validation to enforce 5-character words.

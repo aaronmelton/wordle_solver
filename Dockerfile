@@ -1,12 +1,15 @@
-#
-# Start with Base image
-#
+##################
+### BASE IMAGE ###
+##################
+
 ARG PYTHON_VER=3.10
 
-FROM python:${PYTHON_VER} AS base
+FROM python:${PYTHON_VER}-alpine AS base
+LABEL prune=true
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
+RUN apk --update add build-base gcc libffi-dev
 RUN pip install poetry
 RUN poetry config virtualenvs.create false
 
@@ -14,19 +17,16 @@ COPY pyproject.toml .
 
 RUN poetry install --no-dev
 
-#
-# Perform any tests
-#
+##################
+### TEST IMAGE ###
+##################
 
 FROM base AS test
+LABEL prune=true
 
 RUN poetry install
 
 COPY . .
-
-#
-# Perform code checks
-#
 
 RUN echo '-->Running Flake8' && \
     flake8 . && \
@@ -41,29 +41,21 @@ RUN echo '-->Running Flake8' && \
     echo '-->Running Bandit' && \
     bandit --recursive ./ --configfile pyproject.toml
 
-ENTRYPOINT ["pytest"]
+###################
+### FINAL IMAGE ###
+###################
 
-CMD ["--color=yes", "-vvv"]
-
-#
-# Build final image
-#
-
-FROM python:${PYTHON_VER}-slim AS cli
-
-ENV LOG_LEVEL=INFO
-ENV LOG_PATH=./log/
-ENV LOG_PREFIX=wordle_solver_
+FROM python:${PYTHON_VER}-alpine
 
 ARG PYTHON_VER
 
-WORKDIR /usr/src/app
+RUN apk --update add busybox-suid speedtest-cli supercronic
 
-RUN mkdir -p /usr/src/app/log/
+RUN ln -snf /usr/share/zoneinfo/UTC /etc/localtime
 
-COPY --from=base /usr/src/app /usr/src/app
-COPY --from=base /usr/local/lib/python${PYTHON_VER}/site-packages /usr/local/lib/python${PYTHON_VER}/site-packages
-COPY --from=base /usr/local/bin /usr/local/bin
+WORKDIR /app
+
+RUN mkdir -p /app/log/
 
 COPY ./wordle_solver .
 

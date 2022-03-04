@@ -169,7 +169,7 @@ def find_no_matches(guess, greens, yellows):
     greens = list(greens)
     yellows = list(yellows)
     for _, letter in enumerate(guess):
-        if not (letter in greens) and not (letter in yellows):
+        if not (letter in greens) and not (letter in yellows):  # pylint: disable=superfluous-parens
             del_this.append(letter)
     logger.debug("del_this=='%s'", del_this)
     logger.debug("STOP")
