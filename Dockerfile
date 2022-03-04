@@ -9,7 +9,7 @@ LABEL prune=true
 
 WORKDIR /app
 
-RUN apk --update add build-base gcc libffi-dev
+RUN apk --update add build-base gcc libffi-dev libstdc++
 RUN pip install poetry
 RUN poetry config virtualenvs.create false
 
@@ -49,13 +49,13 @@ FROM python:${PYTHON_VER}-alpine
 
 ARG PYTHON_VER
 
-RUN apk --update add busybox-suid speedtest-cli supercronic
-
-RUN ln -snf /usr/share/zoneinfo/UTC /etc/localtime
-
 WORKDIR /app
 
 RUN mkdir -p /app/log/
+
+COPY --from=base /usr/local/lib/python${PYTHON_VER}/site-packages /usr/local/lib/python${PYTHON_VER}/site-packages
+COPY --from=base /usr/lib/libstdc* /usr/lib/
+COPY --from=base /usr/lib/libgcc* /usr/lib/
 
 COPY ./wordle_solver .
 

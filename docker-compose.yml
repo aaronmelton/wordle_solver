@@ -1,0 +1,12 @@
+---
+version: "3"
+services:
+  wordle_solver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - LOG_LEVEL=INFO
+      - LOG_PATH=./log/
+      - LOG_PREFIX=wordle_solver_
+    image: wordle_solver:latest
