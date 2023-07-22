@@ -1,5 +1,11 @@
 # CHANGELOG
 
+
+## [0.7.1] - 2023-07-22
+### Changed
+- Updating Python libraries.
+
+
 ## [0.7.0] - 2022-03-04
 ### Changed
 - Ignoring pylint warning.
@@ -13,6 +19,7 @@
 - Updating bandit (1.7.1 -> 1.7.4)
 - Updating pandas (1.3.5 -> 1.4.1)
 
+
 ## [0.6.0] - 2022-02-11
 ### Added
 - Added input validation to enforce 5-character words.
@@ -22,6 +29,7 @@
 ### Removed
 - Removed functions assigning value to words (need to re-work this).
 
+
 ## [0.5.1] - 2022-01-30
 ### Changed
 - Broke sorting list alphabetically somewhere along the way so fixed this.
@@ -30,6 +38,7 @@
   was called.
 ### Removed
 - Removed some debug code.
+
 
 ## [0.5.0] - 2022-01-24
 ### Changed
@@ -49,11 +58,13 @@
 - Added checks to the presence of yellow/green letters to prevent functions from
   attempting to process blank inputs from the user.
 
+
 ## [0.4.1] - 2022-01-21
 ### Changed
 - README.md: Cleaned up headers.
 - wordle_solver.png: Combined two screenshots into one image.
 - wordle_solver.py: Fixed grammar.
+
 
 ## [0.4.0] - 2022-01-21
 ### Added
@@ -66,18 +77,22 @@
 - README.md: Improved documentation.
 - wordle_*.png: Updated to show improved functionality.
 
+
 ## [0.3.1] - 2022-01-20
 ### Changed
 - Added space between Word: and the user input.
+
 
 ## [0.3.0] - 2022-01-20
 ### Changed
 - Added new functions to improve code re-use.
 - Addressed linting issues.
 
+
 ## [0.2.0] - 2022-01-29
 ### Added
 - Added user-interactive part to collect inputs from user.
+
 
 ## [0.1.0] - 2022-01-18
 ### Added
