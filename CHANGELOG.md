@@ -1,6 +1,31 @@
 # CHANGELOG
 
 
+## [0.7.2] - 2023-12-25
+### Changed
+- Updating smmap (5.0.0 -> 5.0.1)
+- Updating gitdb (4.0.10 -> 4.0.11)
+- Updating lazy-object-proxy (1.9.0 -> 1.10.0)
+- Updating pbr (5.11.1 -> 6.0.0)
+- Updating pygments (2.15.1 -> 2.17.2)
+- Updating wrapt (1.15.0 -> 1.16.0)
+- Updating astroid (2.15.6 -> 2.15.8)
+- Updating click (8.1.6 -> 8.1.7)
+- Updating gitpython (3.1.32 -> 3.1.40)
+- Updating isort (5.12.0 -> 5.13.2)
+- Updating numpy (1.25.1 -> 1.26.2)
+- Updating packaging (23.1 -> 23.2)
+- Updating pathspec (0.11.1 -> 0.12.1)
+- Updating platformdirs (3.9.1 -> 4.1.0)
+- Updating pluggy (1.2.0 -> 1.3.0)
+- Updating pytz (2023.3 -> 2023.3.post1)
+- Updating rich (13.4.2 -> 13.7.0)
+- Updating tomlkit (0.11.8 -> 0.12.3)
+- Updating typing-extensions (4.7.1 -> 4.9.0)
+- Updating bandit (1.7.5 -> 1.7.6)
+- Updating pylint (2.17.4 -> 2.17.7)
+
+
 ## [0.7.1] - 2023-07-22
 ### Changed
 - Updating Python libraries.
